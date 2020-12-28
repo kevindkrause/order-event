@@ -34,5 +34,5 @@ clean-targets:         # directories to be removed by `dbt clean`
 models:
   stg:
     #schema: stg
-   # materialized: view
+    materialized: table
         
