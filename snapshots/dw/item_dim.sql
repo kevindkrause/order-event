@@ -21,8 +21,7 @@ with new_itm as (
 ),
 existing_itm as (
   select item_key, product_id, item_nm, item_desc, load_dttm
-  from dw.item_dim
-  where dbt_valid_to is null
+  from rpt.item_dim_curr_v
 )
 
 select coalesce( i.item_key, dw.item_key_seq.nextval ) as item_key, n.product_id, n.item_nm, n.item_desc, n.load_dttm
