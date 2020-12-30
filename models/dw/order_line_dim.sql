@@ -20,11 +20,14 @@ with new_item as(
 ),
 itm_key as (
     select item_key, product_id
-    from rpt.item_dim_curr_v
+    --from rpt.item_dim_curr_v
+    from {{ ref( 'item_dim' ) }}
+    where dbt_valid_to is null
 ),
 ord_key as (
     select order_key, order_id
-    from dw.order_key_xref
+    --from dw.order_key_xref
+    from {{ ref( 'order_key_xref' ) }}
 )  
 
 select o.order_key, i.item_key, n.order_id, n.product_id, n.vendor_product_id, n.basket_product_id, n.pos_ref_cd, n.special_instructions, n.recipient_nm, n.item_qty, n.base_cost_amt, n.unit_cost_amt, n.load_dttm

@@ -91,11 +91,14 @@ with new_ord as (
 ),
 loc_key as (
     select location_key, location_id
-    from rpt.location_dim_curr_v
+    --from rpt.location_dim_curr_v
+    from {{ ref( 'location_dim' ) }}
+    where dbt_valid_to is null 
 ),
 ord_key as (
     select order_key, order_id
-    from dw.order_key_xref
+    --from dw.order_key_xref
+    from {{ ref( 'order_key_xref' ) }}
 )  
 
 select o.order_key, l.location_key, n.order_dt, n.order_id, n.basket_id, n.group_order_id, n.order_guid, n.external_ref_cd, n.api_client_ref_cd
@@ -116,9 +119,4 @@ inner join loc_key l
     on n.location_id = l.location_id
 inner join ord_key o
     on n.order_id = o.order_id  
-
-{% if is_incremental() %}
-  -- this filter will only be applied on an incremental run
-  where order_dt between '2020-01-01' and '2020-12-31'
-
-{% endif %}    
+ 

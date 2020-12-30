@@ -19,7 +19,8 @@ with new_pymt as(
 ),
 ord_key as (
     select order_key, order_id
-    from dw.order_key_xref
+    --from dw.order_key_xref
+    from {{ ref( 'order_key_xref' ) }}
 )    
 
 select o.order_key, n.order_id, n.seq_num, n.payment_type, n.payment_scheme, n.payment_desc, n.payment_amt, n.tip_amt, n.credit_card_desc, n.paid_in_advance_flg, n.load_dttm
