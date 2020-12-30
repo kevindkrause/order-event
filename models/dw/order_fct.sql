@@ -1,8 +1,9 @@
 {{ config(
         materialized='incremental',
-        unique_key='order_key' ) }}
+        unique_key='order_key',
+        cluster_by=['order_dt'] ) }}
 
-with new_ord as(
+with new_ord as (
     select
        order_id
       ,basket_id
@@ -12,6 +13,7 @@ with new_ord as(
       ,cast( substr( api_client_reference, 1, 8000 ) as varchar(8000) ) as api_client_ref_cd
       ,cast( substr( pos_ref, 1, 8000 ) as varchar(8000) ) as pos_ref_cd
       ,cast( substr( order_status, 1, 1000 ) as varchar(1000) ) as order_status_cd
+      ,date_trunc( 'DAY', time_placed_utc ) as order_dt
       ,time_placed_utc as order_placed_utc_dttm
       ,time_placed_local as order_placed_local_dttm		
       ,time_ready_utc as order_ready_utc_dttm			
@@ -96,7 +98,7 @@ ord_key as (
     from dw.order_key_xref
 )  
 
-select o.order_key, l.location_key, n.order_id, n.basket_id, n.group_order_id, n.order_guid, n.external_ref_cd, n.api_client_ref_cd
+select o.order_key, l.location_key, n.order_dt, n.order_id, n.basket_id, n.group_order_id, n.order_guid, n.external_ref_cd, n.api_client_ref_cd
 	,n.pos_ref_cd, n.order_status_cd, n.order_placed_utc_dttm, n.order_placed_local_dttm, n.order_ready_utc_dttm, n.order_closed_utc_dttm
 	,n.order_closed_local_dttm, n.order_cancelled_utc_dttm, n.order_failed_utc_dttm, n.order_prep_end_time_utc_dttm, n.order_prep_end_time_local_dttm
 	,n.order_time_start_making_utc_dttm, n.order_time_start_making_local_dttm, n.order_time_fired_utc_dttm, n.order_time_fired_local_dttm
@@ -113,4 +115,10 @@ from new_ord n
 inner join loc_key l
     on n.location_id = l.location_id
 inner join ord_key o
-    on n.order_id = o.order_id   
+    on n.order_id = o.order_id  
+
+{% if is_incremental() %}
+  -- this filter will only be applied on an incremental run
+  where order_dt between '2020-01-01' and '2020-12-31'
+
+{% endif %}    

@@ -1,0 +1,7 @@
+packages:
+  - package: fishtown-analytics/dbt_utils
+    version: 0.6.2
+#  - package: fivetran/github_source 
+#    version: 0.2.0 
+#  - package: gitlabhq/snowflake_spend
+#    version: 1.2.0
