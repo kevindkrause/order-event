@@ -118,5 +118,5 @@ from new_ord n
 inner join loc_key l
     on n.location_id = l.location_id
 inner join ord_key o
-    on n.order_id = o.order_id  
+    on n.order_id = o.order_id     
  
