@@ -1,0 +1,7 @@
+# example profiles.yml file
+Olo:
+  target: ODE
+  outputs:
+    ODE:
+      dbname: ODE
+      schema: stg
